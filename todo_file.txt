@@ -1,0 +1,14 @@
+pieces:
+    P -> white
+    R -> white
+    B -> white
+    N -> white
+    Q -> white
+    K -> white
+
+    p -> black
+    r -> black
+    b -> black
+    n -> black
+    q -> black
+    k -> black
