@@ -21,6 +21,9 @@ struct MainState {
 impl MainState {
     fn create_board(ctx: &mut Context) -> GameResult<MainState> {
         let mut board_vec = vec![];
+        let test_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        let board_test: Vec<Vec<char>> = fen_functions::from_fen(test_fen);
+        dbg!(board_test);
         board_vec = gen_board::generate_board(SCREEN_SIZE, ctx);
         Ok(MainState { board_vec })
     }
