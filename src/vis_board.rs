@@ -12,18 +12,18 @@ pub fn board_to_vis(
     canvas: &mut graphics::Canvas,
 ) {
     let data: Vec<(char, &str)> = vec![
-        ('p', "./sprites/b_pawn_2x_ns.png"),
-        ('r', "./sprites/b_rook_2x_ns.png"),
-        ('n', "./sprites/b_knight_2x_ns.png"),
-        ('q', "./sprites/b_queen_2x_ns.png"),
-        ('k', "./sprites/b_king_2x_ns.png"),
-        ('b', "./sprites/b_bishop_2x_ns.png"),
-        ('P', "./sprites/w_pawn_2x_ns.png"),
-        ('R', "./sprites/w_rook_2x_ns.png"),
-        ('N', "./sprites/w_knight_2x_ns.png"),
-        ('Q', "./sprites/w_queen_2x_ns.png"),
-        ('K', "./sprites/w_king_2x_ns.png"),
-        ('B', "./sprites/w_bishop_2x_ns.png"),
+        ('p', "/b_pawn_2x_ns.png"),
+        ('r', "/b_rook_2x_ns.png"),
+        ('n', "/b_knight_2x_ns.png"),
+        ('q', "/b_queen_2x_ns.png"),
+        ('k', "/b_king_2x_ns.png"),
+        ('b', "/b_bishop_2x_ns.png"),
+        ('P', "/w_pawn_2x_ns.png"),
+        ('R', "/w_rook_2x_ns.png"),
+        ('N', "/w_knight_2x_ns.png"),
+        ('Q', "/w_queen_2x_ns.png"),
+        ('K', "/w_king_2x_ns.png"),
+        ('B', "/w_bishop_2x_ns.png"),
     ];
     let map: HashMap<char, &str> = HashMap::from_iter(data.into_iter());
 
@@ -32,14 +32,19 @@ pub fn board_to_vis(
     for (y, line) in board.iter().enumerate() {
         for (x, e) in line.iter().enumerate() {
             if *e != '0' {
-                dbg!(map.get(&e));
                 let image = graphics::Image::from_path(ctx, map.get(&e).unwrap()).unwrap();
                 let scale_factor: Vec2 = Vec2::new(
                     im_size / (image.height() as f32),
                     im_size / (image.height() as f32),
                 );
-                let draw_params = graphics::DrawParam::new().scale(scale_factor);
-                image.draw(canvas, vec2(x as f32 * im_size, y as f32 * im_size));
+                let draw_params = graphics::DrawParam::new()
+                    .scale(scale_factor)
+                    .dest(vec2(x as f32 * im_size, y as f32 * im_size));
+                image.draw(canvas, draw_params);
+                //let word = graphics::Text::new(*e);
+                //let word_params: graphics::DrawParam =
+                //graphics::DrawParam::new().dest(vec2(x as f32 * im_size, y as f32 * im_size));
+                //word.draw(canvas, word_params)
             }
         }
     }

@@ -43,6 +43,7 @@ impl event::EventHandler<ggez::GameError> for MainState {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
+        println!("ciao");
         let mut canvas =
             graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
 
@@ -68,6 +69,7 @@ pub fn main() -> GameResult {
     //change window title
     conf.window_setup.title = "chesso".to_owned();
     let cb = ggez::ContextBuilder::new("super_simple", "ggez")
+        .add_resource_path("/home/filippo/Desktop/projects/chess_rust/sprites")
         .default_conf(conf)
         .window_mode(window_mode);
 
