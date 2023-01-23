@@ -1,5 +1,25 @@
-pub fn to_fen(board: Vec<Vec<&str>>) -> &str {
-    let mut fen_string: &str = "";
+pub fn to_fen(board: &Vec<Vec<char>>) -> String {
+    let mut fen_string: String = "".to_string();
+    for line in board {
+        let mut blank_counter: u8 = 0;
+        for e in line {
+            if *e == '0' {
+                blank_counter += 1;
+            } else {
+                if blank_counter != 0 {
+                    fen_string.push_str(&blank_counter.to_string());
+                    fen_string.push(*e);
+                    blank_counter = 0;
+                } else {
+                    fen_string.push(*e);
+                }
+            }
+        }
+        if blank_counter != 0 {
+            fen_string.push_str(&blank_counter.to_string());
+        }
+        fen_string.push('/');
+    }
 
     return fen_string;
 }

@@ -3,6 +3,7 @@
 
 mod fen_functions;
 mod gen_board;
+mod vis_board;
 
 use ggez::{
     conf::WindowMode,
@@ -12,20 +13,28 @@ use ggez::{
     Context, GameResult,
 };
 
+use crate::vis_board::board_to_vis;
+
 const SCREEN_SIZE: f32 = 400.0;
 
 struct MainState {
     board_vec: Vec<graphics::Mesh>,
+    board_test: Vec<Vec<char>>,
 }
 
 impl MainState {
     fn create_board(ctx: &mut Context) -> GameResult<MainState> {
         let mut board_vec = vec![];
-        let test_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
-        let board_test: Vec<Vec<char>> = fen_functions::from_fen(test_fen);
-        dbg!(board_test);
+        let test_fen = "rnbqkbnr/pppp1ppp/3p4/8/8/8/PPPPPPPP/RNBQKBNR";
+        let mut board_test: Vec<Vec<char>> = fen_functions::from_fen(test_fen);
+        //dbg!(board_test);
+        let new_fen = fen_functions::to_fen(&board_test);
+        dbg!(new_fen);
         board_vec = gen_board::generate_board(SCREEN_SIZE, ctx);
-        Ok(MainState { board_vec })
+        Ok(MainState {
+            board_vec,
+            board_test,
+        })
     }
 }
 impl event::EventHandler<ggez::GameError> for MainState {
@@ -40,6 +49,8 @@ impl event::EventHandler<ggez::GameError> for MainState {
         for sq in &self.board_vec {
             canvas.draw(sq, Vec2::new(0.0, 0.0));
         }
+
+        board_to_vis(&self.board_test, ctx, SCREEN_SIZE, &mut canvas);
 
         canvas.finish(ctx)?;
 
