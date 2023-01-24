@@ -26,6 +26,7 @@ struct MainState {
     board_test: Vec<Vec<char>>,
     pieces_vec: Vec<(graphics::Text, DrawParam)>,
     fen: String,
+    moving_piece: movements::MovingStruct,
 }
 
 impl MainState {
@@ -34,11 +35,13 @@ impl MainState {
         let board_test: Vec<Vec<char>> = fen_functions::from_fen(&fen);
         let board_vec = gen_board::generate_board(SCREEN_SIZE, ctx);
         let pieces_vec = vis_board::board_to_vis(&board_test, ctx, SCREEN_SIZE);
+        let moving_piece = movements::MovingStruct::new(false, '0');
         Ok(MainState {
             board_vec,
             board_test,
             pieces_vec,
             fen,
+            moving_piece,
         })
     }
 }
@@ -47,11 +50,15 @@ impl event::EventHandler<ggez::GameError> for MainState {
         let mouse_position: Point2<f32> = _ctx.mouse.position();
         let is_clicked: bool = _ctx.mouse.button_just_pressed(event::MouseButton::Left);
         if is_clicked {
-            movements::get_piece(mouse_position, &mut self.board_test, SCREEN_SIZE / 8.0);
+            movements::get_piece(
+                mouse_position,
+                &mut self.board_test,
+                SCREEN_SIZE / 8.0,
+                &mut self.moving_piece,
+            );
             self.fen = fen_functions::to_fen(&self.board_test);
             self.board_vec = gen_board::generate_board(SCREEN_SIZE, _ctx);
             self.pieces_vec = vis_board::board_to_vis(&self.board_test, _ctx, SCREEN_SIZE);
-            dbg!(&self.fen);
         }
         Ok(())
     }
