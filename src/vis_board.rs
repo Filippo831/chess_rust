@@ -9,8 +9,9 @@ pub fn board_to_vis(
     board: &Vec<Vec<char>>,
     ctx: &mut Context,
     tot_height: f32,
-    canvas: &mut graphics::Canvas,
-) {
+) -> Vec<(graphics::Text, DrawParam)> {
+    let mut pieces_vec: Vec<(graphics::Text, DrawParam)> = vec![];
+
     let data: Vec<(char, &str)> = vec![
         ('p', "/b_pawn_2x_ns.png"),
         ('r', "/b_rook_2x_ns.png"),
@@ -32,20 +33,24 @@ pub fn board_to_vis(
     for (y, line) in board.iter().enumerate() {
         for (x, e) in line.iter().enumerate() {
             if *e != '0' {
-                let image = graphics::Image::from_path(ctx, map.get(&e).unwrap()).unwrap();
-                let scale_factor: Vec2 = Vec2::new(
-                    im_size / (image.height() as f32),
-                    im_size / (image.height() as f32),
-                );
-                let draw_params = graphics::DrawParam::new()
-                    .scale(scale_factor)
-                    .dest(vec2(x as f32 * im_size, y as f32 * im_size));
-                image.draw(canvas, draw_params);
-                //let word = graphics::Text::new(*e);
-                //let word_params: graphics::DrawParam =
-                //graphics::DrawParam::new().dest(vec2(x as f32 * im_size, y as f32 * im_size));
-                //word.draw(canvas, word_params)
+                //let image = graphics::Image::from_path(ctx, map.get(&e).unwrap()).unwrap();
+                //let scale_factor: Vec2 = Vec2::new(
+                //im_size / (image.height() as f32),
+                //im_size / (image.height() as f32),
+                //);
+                //let draw_params = graphics::DrawParam::new()
+                //.scale(scale_factor)
+                //.dest(vec2(x as f32 * im_size, y as f32 * im_size));
+                //pieces_vec.push((image, draw_params));
+                //image.draw(canvas, draw_params);
+                let word = graphics::Text::new(*e);
+                let word_params: graphics::DrawParam = graphics::DrawParam::new().dest(vec2(
+                    (x as f32 * im_size) + im_size / 2.0,
+                    (y as f32 * im_size) + im_size / 2.0,
+                ));
+                pieces_vec.push((word, word_params));
             }
         }
     }
+    return pieces_vec;
 }

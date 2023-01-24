@@ -24,7 +24,7 @@ pub fn to_fen(board: &Vec<Vec<char>>) -> String {
     return fen_string;
 }
 
-pub fn from_fen(fen_string: &str) -> Vec<Vec<char>> {
+pub fn from_fen(fen_string: &String) -> Vec<Vec<char>> {
     let mut board: Vec<Vec<char>> = vec![vec!['0'; 8]; 8];
     let fen_blocks: Vec<&str> = fen_string.split("/").collect();
 

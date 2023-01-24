@@ -3,15 +3,19 @@
 
 mod fen_functions;
 mod gen_board;
+mod movements;
 mod vis_board;
 
+use gen_board::generate_board;
 use ggez::{
     conf::WindowMode,
     event,
     glam::*,
-    graphics::{self, Color},
+    graphics::{self, Color, DrawParam},
+    mint::Point2,
     Context, GameResult,
 };
+use movements::get_piece;
 
 use crate::vis_board::board_to_vis;
 
@@ -20,38 +24,48 @@ const SCREEN_SIZE: f32 = 400.0;
 struct MainState {
     board_vec: Vec<graphics::Mesh>,
     board_test: Vec<Vec<char>>,
+    pieces_vec: Vec<(graphics::Text, DrawParam)>,
+    fen: String,
 }
 
 impl MainState {
     fn create_board(ctx: &mut Context) -> GameResult<MainState> {
-        let mut board_vec = vec![];
-        let test_fen = "rnbqkbnr/pppp1ppp/3p4/8/8/8/PPPPPPPP/RNBQKBNR";
-        let mut board_test: Vec<Vec<char>> = fen_functions::from_fen(test_fen);
-        //dbg!(board_test);
-        let new_fen = fen_functions::to_fen(&board_test);
-        dbg!(new_fen);
-        board_vec = gen_board::generate_board(SCREEN_SIZE, ctx);
+        let fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR".to_string();
+        let board_test: Vec<Vec<char>> = fen_functions::from_fen(&fen);
+        let board_vec = gen_board::generate_board(SCREEN_SIZE, ctx);
+        let pieces_vec = vis_board::board_to_vis(&board_test, ctx, SCREEN_SIZE);
         Ok(MainState {
             board_vec,
             board_test,
+            pieces_vec,
+            fen,
         })
     }
 }
 impl event::EventHandler<ggez::GameError> for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
+        let mouse_position: Point2<f32> = _ctx.mouse.position();
+        let is_clicked: bool = _ctx.mouse.button_just_pressed(event::MouseButton::Left);
+        if is_clicked {
+            movements::get_piece(mouse_position, &mut self.board_test, SCREEN_SIZE / 8.0);
+            self.fen = fen_functions::to_fen(&self.board_test);
+            self.board_vec = gen_board::generate_board(SCREEN_SIZE, _ctx);
+            self.pieces_vec = vis_board::board_to_vis(&self.board_test, _ctx, SCREEN_SIZE);
+            dbg!(&self.fen);
+        }
         Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
-        println!("ciao");
         let mut canvas =
             graphics::Canvas::from_frame(ctx, graphics::Color::from([0.1, 0.2, 0.3, 1.0]));
 
         for sq in &self.board_vec {
             canvas.draw(sq, Vec2::new(0.0, 0.0));
         }
-
-        board_to_vis(&self.board_test, ctx, SCREEN_SIZE, &mut canvas);
+        for piece in &self.pieces_vec {
+            canvas.draw(&piece.0, piece.1);
+        }
 
         canvas.finish(ctx)?;
 
