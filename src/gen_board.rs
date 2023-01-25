@@ -1,11 +1,13 @@
 use ggez::{graphics, Context};
 
+// draw the background
 pub fn generate_board(screen_size: f32, ctx: &mut Context) -> Vec<graphics::Mesh> {
     let mut board_vec: Vec<graphics::Mesh> = vec![];
     let square_size: f32 = screen_size / 8.0;
     for x in 0..8 {
         for y in 0..8 {
             let color: graphics::Color;
+
             if (x + y) % 2 == 0 {
                 color = graphics::Color::from_rgb(115, 56, 26);
             } else {
