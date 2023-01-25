@@ -50,15 +50,27 @@ impl event::EventHandler<ggez::GameError> for MainState {
         let mouse_position: Point2<f32> = _ctx.mouse.position();
         let is_clicked: bool = _ctx.mouse.button_just_pressed(event::MouseButton::Left);
         if is_clicked {
-            movements::get_piece(
-                mouse_position,
-                &mut self.board_test,
-                SCREEN_SIZE / 8.0,
-                &mut self.moving_piece,
-            );
-            self.fen = fen_functions::to_fen(&self.board_test);
-            self.board_vec = gen_board::generate_board(SCREEN_SIZE, _ctx);
-            self.pieces_vec = vis_board::board_to_vis(&self.board_test, _ctx, SCREEN_SIZE);
+            if !self.moving_piece.fetch_is_moving() {
+                movements::get_piece(
+                    mouse_position,
+                    &mut self.board_test,
+                    SCREEN_SIZE / 8.0,
+                    &mut self.moving_piece,
+                );
+                self.fen = fen_functions::to_fen(&self.board_test);
+                self.board_vec = gen_board::generate_board(SCREEN_SIZE, _ctx);
+                self.pieces_vec = vis_board::board_to_vis(&self.board_test, _ctx, SCREEN_SIZE);
+            } else {
+                movements::put_piece(
+                    mouse_position,
+                    &mut self.board_test,
+                    SCREEN_SIZE / 8.0,
+                    &mut self.moving_piece,
+                );
+                self.fen = fen_functions::to_fen(&self.board_test);
+                self.board_vec = gen_board::generate_board(SCREEN_SIZE, _ctx);
+                self.pieces_vec = vis_board::board_to_vis(&self.board_test, _ctx, SCREEN_SIZE);
+            }
         }
         Ok(())
     }
