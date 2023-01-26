@@ -1,6 +1,7 @@
 //! The simplest possible example that does something.
 #![allow(clippy::unnecessary_wraps)]
 
+mod evaluate_movements;
 mod event_handler;
 mod fen_functions;
 mod gen_board;
@@ -11,7 +12,7 @@ use ggez::{
     conf::WindowMode,
     event,
     glam::*,
-    graphics::{self, Color, DrawParam},
+    graphics::{self, Color, DrawParam, Drawable},
     mint::Point2,
     Context, GameResult,
 };
@@ -47,6 +48,7 @@ impl event::EventHandler<ggez::GameError> for MainState {
     fn update(&mut self, _ctx: &mut Context) -> GameResult {
         //get mouse position
         let mouse_position: Point2<f32> = _ctx.mouse.position();
+        self.moving_piece.set_position(mouse_position);
         let is_clicked: bool = _ctx.mouse.button_just_pressed(event::MouseButton::Left);
         if is_clicked {
             //when the mouse is clicked see if you have a piece moving or not, if true pick the
@@ -77,6 +79,11 @@ impl event::EventHandler<ggez::GameError> for MainState {
         for piece in &self.pieces_vec {
             canvas.draw(&piece.0, piece.1);
         }
+
+        let moving_piece_mesh: &(graphics::Text, graphics::DrawParam) =
+            &self.moving_piece.get_piece_mesh();
+
+        canvas.draw(&moving_piece_mesh.0, moving_piece_mesh.1);
 
         canvas.finish(ctx)?;
 

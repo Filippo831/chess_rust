@@ -3,7 +3,7 @@ use ggez::{graphics, mint::Point2};
 pub struct MovingStruct {
     is_moving: bool,
     piece: char,
-    piece_mesh: graphics::Text,
+    piece_mesh: (graphics::Text, graphics::DrawParam),
 }
 impl MovingStruct {
     pub fn toggle_is_moving(&mut self) {
@@ -14,7 +14,8 @@ impl MovingStruct {
         self.piece = new_piece;
     }
     pub fn new(is_moving: bool, piece: char) -> MovingStruct {
-        let piece_mesh: graphics::Text = graphics::Text::new("");
+        let piece_mesh: (graphics::Text, graphics::DrawParam) =
+            (graphics::Text::new(""), graphics::DrawParam::new());
         MovingStruct {
             is_moving,
             piece,
@@ -27,6 +28,12 @@ impl MovingStruct {
     }
     pub fn fetch_is_moving(&mut self) -> bool {
         return self.is_moving;
+    }
+    pub fn set_position(&mut self, position: Point2<f32>) {
+        self.piece_mesh.1 = graphics::DrawParam::new().dest(position);
+    }
+    pub fn get_piece_mesh(&mut self) -> &(graphics::Text, graphics::DrawParam) {
+        return &self.piece_mesh;
     }
 }
 
@@ -44,7 +51,7 @@ pub fn get_piece(
     if board[y_nth as usize][x_nth as usize] != '0' {
         moving_piece.toggle_is_moving();
         moving_piece.set_piece(board[y_nth as usize][x_nth as usize]);
-        moving_piece.piece_mesh = graphics::Text::new(moving_piece.fetch_piece());
+        moving_piece.piece_mesh.0 = graphics::Text::new(moving_piece.fetch_piece());
         board[y_nth as usize][x_nth as usize] = '0';
     }
 }
@@ -69,6 +76,6 @@ pub unsafe fn put_piece(
         *board_caracter = moving_piece.fetch_piece();
         moving_piece.set_piece('0');
         moving_piece.toggle_is_moving();
-        moving_piece.piece_mesh = graphics::Text::new(moving_piece.fetch_piece());
+        moving_piece.piece_mesh.0 = graphics::Text::new("");
     }
 }
