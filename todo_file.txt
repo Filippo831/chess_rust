@@ -12,3 +12,6 @@ pieces:
     n -> black
     q -> black
     k -> black
+
+board position
+    board[row][column]
